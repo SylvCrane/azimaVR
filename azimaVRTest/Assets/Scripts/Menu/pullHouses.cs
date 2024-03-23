@@ -19,7 +19,7 @@ public class pullHouses : MonoBehaviour
 
     IEnumerator Download()
     {
-        using (UnityWebRequest request = UnityWebRequest.Get("http://localhost:8082/routes/api/house/puller/HouseTest1"))
+        using (UnityWebRequest request = UnityWebRequest.Get("http://localhost:8082/api/house/house/puller/Testing"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
 
