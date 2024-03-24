@@ -11,11 +11,16 @@ public class House
     public int rooms;
     public int bathrooms;
     public int livingAreas;
-    public int sqFootage;
+    public double sqFootage;
     public double price;
     public DateTime dateListed;
     public string location;
     public int kitchen;
     public bool backyard;
     public bool laundryRoom;
+
+    public static House ParseHouse(string json)
+    {
+        return JsonUtility.FromJson<House>(json);
+    }
 }
