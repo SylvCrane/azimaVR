@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[System.Serializable]
 public class House
 {
     public string houseID;
@@ -13,7 +14,7 @@ public class House
     public int livingAreas;
     public double sqFootage;
     public double price;
-    public DateTime dateListed;
+    public string dateListed;
     public string location;
     public int kitchen;
     public bool backyard;
@@ -23,4 +24,6 @@ public class House
     {
         return JsonUtility.FromJson<House>(json);
     }
+
+    
 }
