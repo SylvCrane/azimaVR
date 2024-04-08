@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class HouseTransfer : MonoBehaviour
 {
+    public GameObject thisHouse;
+
     public void transferHouseDetails()
     {
-        HouseData.selectedHouse = GameObject.Find("houseStore").GetComponent<houseStorage>().specificHouse;
+        HouseData.selectedHouse = thisHouse.transform.Find("houseStore").GetComponent<houseStorage>().specificHouse;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
     }
 }

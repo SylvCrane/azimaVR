@@ -7,7 +7,7 @@ using TMPro;
 public class pullHouses : MonoBehaviour
 {
     public House tempHouses;
-    public GameObject MenuHouse;
+    public GameObject houseList;
 
 
     // Start is called before the first frame update
@@ -25,7 +25,7 @@ public class pullHouses : MonoBehaviour
 
     IEnumerator Download(System.Action<HouseCollection> caller = null)
     {
-        using (UnityWebRequest request = UnityWebRequest.Get("http://localhost:8082/api/house/house/puller/Testing"))
+        using (UnityWebRequest request = UnityWebRequest.Get("http://localhost:8082/api/house"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
 
@@ -53,30 +53,25 @@ public class pullHouses : MonoBehaviour
             tempHouses.images[i] = new Images();
         }
 
+        GameObject blankHouse = houseList.transform.GetChild(0).gameObject;
+        GameObject nonOverWrittenHouse = blankHouse;
+
         if (data != null)
         {
-            Debug.Log("House downloaded!");
-            tempHouses.houseID = data.houses[0].houseID;
-            tempHouses.rooms = data.houses[0].rooms;
-            tempHouses.bathrooms = data.houses[0].bathrooms;
-            tempHouses.livingAreas = data.houses[0].livingAreas;
-            tempHouses.sqFootage = data.houses[0].sqFootage;
-            tempHouses.price = data.houses[0].price;
-            tempHouses.dateListed = data.houses[0].dateListed;
-            tempHouses.location = data.houses[0].location;
-            tempHouses.kitchen = data.houses[0].kitchen;
-            tempHouses.backyard = data.houses[0].backyard;
-            tempHouses.laundryRoom = data.houses[0].laundryRoom;
-
-            for (int i = 0; i < data.houses[0].images.Length; i++)
+            for (int i = 0; i < data.houses.Length; i++)
             {
-                tempHouses.images[i].name = data.houses[0].images[i].name;
-                tempHouses.images[i].imageURL = data.houses[0].images[i].imageURL;
-                tempHouses.images[i].houseID = data.houses[0].houseID;
+                if (i == 0)
+                {
+                    assignValues(blankHouse, data.houses[i]);
+                }
+                else
+                {
+                    GameObject currentHouse = Instantiate(nonOverWrittenHouse, houseList.transform);
+                    currentHouse.transform.SetParent(houseList.transform);
+                    currentHouse.transform.SetAsLastSibling();
+                    assignValues(currentHouse, data.houses[i]);
+                }
             }
-
-            MenuHouse.transform.Find("houseStore").GetComponent<houseStorage>().specificHouse = tempHouses;
-            assignValues();
         }
         else
         {
@@ -84,30 +79,54 @@ public class pullHouses : MonoBehaviour
         }
     }
 
-    public void assignValues()
+    public void assignValues(GameObject subjectHouse, House currentHouseData)
     {
-        TextMeshProUGUI locationText = MenuHouse.transform.Find("houseName").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI priceText = MenuHouse.transform.Find("Price").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI bedroomText = MenuHouse.transform.Find("BedroomNum").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI bathroomText = MenuHouse.transform.Find("BathroomNum").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI livingRoomText = MenuHouse.transform.Find("LivingRoomNum").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI sqFootageText = MenuHouse.transform.Find("SqFootageNum").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI kitchenText = MenuHouse.transform.Find("KitchenNum").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI backyardText = MenuHouse.transform.Find("Backyard?").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI laundryRoomText = MenuHouse.transform.Find("LaundryRoom?").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI dateText = MenuHouse.transform.Find("DateTimeNum").GetComponent<TextMeshProUGUI>();
+        
 
-        locationText.text = tempHouses.location;
-        priceText.text = tempHouses.price.ToString();
-        bedroomText.text = tempHouses.rooms.ToString();
-        bathroomText.text = tempHouses.bathrooms.ToString();
-        livingRoomText.text = tempHouses.livingAreas.ToString();
-        sqFootageText.text = tempHouses.sqFootage.ToString();
-        kitchenText.text = tempHouses.kitchen.ToString();
+        //Debug.Log("House downloaded!");
+        //tempHouses.houseID = data.houses[0].houseID;
+        //tempHouses.rooms = data.houses[0].rooms;
+        //tempHouses.bathrooms = data.houses[0].bathrooms;
+        //tempHouses.livingAreas = data.houses[0].livingAreas;
+        //tempHouses.sqFootage = data.houses[0].sqFootage;
+        //tempHouses.price = data.houses[0].price;
+        //tempHouses.dateListed = data.houses[0].dateListed;
+        //tempHouses.location = data.houses[0].location;
+        //tempHouses.kitchen = data.houses[0].kitchen;
+        //tempHouses.backyard = data.houses[0].backyard;
+        //tempHouses.laundryRoom = data.houses[0].laundryRoom;
 
-        backyardText.text = (tempHouses.backyard) ? "True" : "False";
-        laundryRoomText.text = (tempHouses.laundryRoom) ? "True" : "False";
+        //for (int j = 0; j < data.houses[0].images.Length; j++)
+        //{
+        //    tempHouses.images[j].name = data.houses[0].images[j].name;
+        //    tempHouses.images[j].imageURL = data.houses[0].images[j].imageURL;
+        //    tempHouses.images[j].houseID = data.houses[0].houseID;
+        //}
 
-        dateText.text = tempHouses.dateListed;
+        subjectHouse.transform.Find("houseStore").GetComponent<houseStorage>().specificHouse = currentHouseData;
+
+        TextMeshProUGUI locationText = subjectHouse.transform.Find("houseName").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI priceText = subjectHouse.transform.Find("Price").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI bedroomText = subjectHouse.transform.Find("BedroomNum").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI bathroomText = subjectHouse.transform.Find("BathroomNum").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI livingRoomText = subjectHouse.transform.Find("LivingRoomNum").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI sqFootageText = subjectHouse.transform.Find("SqFootageNum").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI kitchenText = subjectHouse.transform.Find("KitchenNum").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI backyardText = subjectHouse.transform.Find("Backyard?").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI laundryRoomText = subjectHouse.transform.Find("LaundryRoom?").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI dateText = subjectHouse.transform.Find("DateTimeNum").GetComponent<TextMeshProUGUI>();
+
+        locationText.text = currentHouseData.location;
+        priceText.text = currentHouseData.price.ToString();
+        bedroomText.text = currentHouseData.rooms.ToString();
+        bathroomText.text = currentHouseData.bathrooms.ToString();
+        livingRoomText.text = currentHouseData.livingAreas.ToString();
+        sqFootageText.text = currentHouseData.sqFootage.ToString();
+        kitchenText.text = currentHouseData.kitchen.ToString();
+
+        backyardText.text = (currentHouseData.backyard) ? "True" : "False";
+        laundryRoomText.text = (currentHouseData.laundryRoom) ? "True" : "False";
+
+        dateText.text = currentHouseData.dateListed;
     }
 }
