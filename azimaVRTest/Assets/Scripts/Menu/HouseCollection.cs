@@ -59,10 +59,63 @@ public class HouseCollection
             newHouses.houses[houseNum].backyard = house["backyard"].AsBool;
             newHouses.houses[houseNum].laundryRoom = house["laundryRoom"].AsBool;
 
-            houseNum++;
+            processPortal(newHouses.houses[houseNum], house);
 
+            houseNum++;
         }
 
         return newHouses;
+    }
+
+    public static void processPortal(House currentHouse, JSONNode jsonHouse)
+    {
+        JSONArray portalCollection = jsonHouse["portals"].AsArray;
+        currentHouse.portals = new Portals[portalCollection.Count];
+
+        for (int i = 0; i < portalCollection.Count; i++)
+        {
+            currentHouse.portals[i] = new Portals();
+            currentHouse.portals[i].triangles = new Triangles[4];
+
+            currentHouse.portals[i].triangles[0] = new Triangles();
+            currentHouse.portals[i].triangles[1] = new Triangles();
+            currentHouse.portals[i].triangles[2] = new Triangles();
+            currentHouse.portals[i].triangles[3] = new Triangles();
+
+            currentHouse.portals[i].textData = new textData();
+            currentHouse.portals[i].textData.rotation = new Rotation();
+        }
+
+        foreach (JSONNode portal in portalCollection)
+        {
+            JSONArray textData = portal["textData"].AsArray;
+            JSONNode rotation = textData["rotation"];
+            JSONArray triangleCollection = portal["triangles"].AsArray;
+
+            int i = 0;
+            int j = 0;
+
+            foreach (JSONNode triangle in triangleCollection)
+            {
+                currentHouse.portals[i].triangles[j].vertexA = triangle["vertexA"];
+                currentHouse.portals[i].triangles[j].vertexB = triangle["vertexB"];
+                currentHouse.portals[i].triangles[j].vertexC = triangle["vertexC"];
+                currentHouse.portals[i].triangles[j].color = triangle["color"];
+
+                j++;
+            }
+
+            currentHouse.portals[i].destination = portal["destination"];
+            currentHouse.portals[i].location = portal["location"];
+
+            currentHouse.portals[i].textData.value = textData["value"];
+            currentHouse.portals[i].textData.position = textData["position"];
+
+            currentHouse.portals[i].textData.rotation.x = rotation["x"].AsDouble;
+            currentHouse.portals[i].textData.rotation.y = rotation["y"].AsDouble;
+            currentHouse.portals[i].textData.rotation.z = rotation["z"].AsDouble;
+
+            i++;
+        }
     }
 }

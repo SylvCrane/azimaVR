@@ -81,28 +81,6 @@ public class pullHouses : MonoBehaviour
 
     public void assignValues(GameObject subjectHouse, House currentHouseData)
     {
-        
-
-        //Debug.Log("House downloaded!");
-        //tempHouses.houseID = data.houses[0].houseID;
-        //tempHouses.rooms = data.houses[0].rooms;
-        //tempHouses.bathrooms = data.houses[0].bathrooms;
-        //tempHouses.livingAreas = data.houses[0].livingAreas;
-        //tempHouses.sqFootage = data.houses[0].sqFootage;
-        //tempHouses.price = data.houses[0].price;
-        //tempHouses.dateListed = data.houses[0].dateListed;
-        //tempHouses.location = data.houses[0].location;
-        //tempHouses.kitchen = data.houses[0].kitchen;
-        //tempHouses.backyard = data.houses[0].backyard;
-        //tempHouses.laundryRoom = data.houses[0].laundryRoom;
-
-        //for (int j = 0; j < data.houses[0].images.Length; j++)
-        //{
-        //    tempHouses.images[j].name = data.houses[0].images[j].name;
-        //    tempHouses.images[j].imageURL = data.houses[0].images[j].imageURL;
-        //    tempHouses.images[j].houseID = data.houses[0].houseID;
-        //}
-
         subjectHouse.transform.Find("houseStore").GetComponent<houseStorage>().specificHouse = currentHouseData;
 
         TextMeshProUGUI locationText = subjectHouse.transform.Find("houseName").GetComponent<TextMeshProUGUI>();
