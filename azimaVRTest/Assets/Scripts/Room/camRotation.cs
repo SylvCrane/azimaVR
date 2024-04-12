@@ -21,6 +21,7 @@ public class camRotation : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;
 
         xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
         yRotation += mouseX;
 
      
