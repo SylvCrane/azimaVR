@@ -7,10 +7,12 @@ public class camRotation : MonoBehaviour
     public float mouseSens = 100f;
     float xRotation = 0f;
     float yRotation = 0f;
+    public Quaternion startingRot;
 
     // Start is called before the first frame update
     void Start()
     {
+        transform.rotation = startingRot;
         Cursor.lockState = CursorLockMode.Locked;
     }
 

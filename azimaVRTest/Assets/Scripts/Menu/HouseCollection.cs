@@ -53,7 +53,9 @@ public class HouseCollection
             newHouses.houses[houseNum].livingAreas = house["livingAreas"].AsInt;
             newHouses.houses[houseNum].sqFootage = house["livingAreas"].AsDouble;
             newHouses.houses[houseNum].price = house["price"].AsDouble;
-            newHouses.houses[houseNum].dateListed = house["dateListed"];
+
+            parseDate(newHouses.houses[houseNum], house);
+           // newHouses.houses[houseNum].dateListed = house["dateListed"];
             newHouses.houses[houseNum].location = house["location"];
             newHouses.houses[houseNum].kitchen = house["kitchen"].AsInt;
             newHouses.houses[houseNum].backyard = house["backyard"].AsBool;
@@ -65,6 +67,36 @@ public class HouseCollection
         }
 
         return newHouses;
+    }
+
+    public static void parseDate(House currentHouse, JSONNode jsonHouse)
+    {
+        string houseDate = jsonHouse["dateListed"];
+        string year = "";
+        string month = "";
+        string day = "";
+
+        int i = 0;
+
+        while (i < 10)
+        {
+            if (i < 4)
+            {
+                year += houseDate[i];
+            }
+            else if ((i > 4) && (i < 7))
+            {
+                month += houseDate[i];
+            }
+            else if ((i > 7) && (i < 10))
+            {
+                day += houseDate[i];
+            }
+
+            i++;
+        }
+
+        currentHouse.dateListed = day + "/" + month + "/" + year;
     }
 
     public static void processPortal(House currentHouse, JSONNode jsonHouse)
@@ -88,12 +120,26 @@ public class HouseCollection
 
         foreach (JSONNode portal in portalCollection)
         {
-            JSONArray textData = portal["textData"].AsArray;
-            JSONNode rotation = textData["rotation"];
-            JSONArray triangleCollection = portal["triangles"].AsArray;
-
             int i = 0;
             int j = 0;
+
+            JSONArray textData = portal["textData"].AsArray;
+            JSONNode rotation;
+
+            foreach(JSONNode textDataSpecific in textData)
+            {
+                rotation = textDataSpecific["rotation"];
+                currentHouse.portals[i].textData.rotation.x = rotation["x"].AsDouble;
+                currentHouse.portals[i].textData.rotation.y = rotation["y"].AsDouble;
+                currentHouse.portals[i].textData.rotation.z = rotation["z"].AsDouble;
+
+                currentHouse.portals[i].textData.value = textDataSpecific["value"];
+                currentHouse.portals[i].textData.position = textDataSpecific["position"];
+            }
+
+            JSONArray triangleCollection = portal["triangles"].AsArray;
+
+            
 
             foreach (JSONNode triangle in triangleCollection)
             {
@@ -107,13 +153,6 @@ public class HouseCollection
 
             currentHouse.portals[i].destination = portal["destination"];
             currentHouse.portals[i].location = portal["location"];
-
-            currentHouse.portals[i].textData.value = textData["value"];
-            currentHouse.portals[i].textData.position = textData["position"];
-
-            currentHouse.portals[i].textData.rotation.x = rotation["x"].AsDouble;
-            currentHouse.portals[i].textData.rotation.y = rotation["y"].AsDouble;
-            currentHouse.portals[i].textData.rotation.z = rotation["z"].AsDouble;
 
             i++;
         }

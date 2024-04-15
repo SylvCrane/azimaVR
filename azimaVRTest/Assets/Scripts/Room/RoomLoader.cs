@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 //Class loads images for room as materials and assigns them to the materialCollection array
 public class RoomLoader : MonoBehaviour
@@ -9,15 +10,11 @@ public class RoomLoader : MonoBehaviour
     public GameObject sphere;
     public Material[] materialCollection;
     public GameObject miniSphere;
+    public bool startImageAssigned;
+    public Slider slider;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        StartCoroutine(loadImages());
-    }
-
-    //Enumerator as this is the best practice for loading data from an API pull
-    private IEnumerator loadImages()
+    IEnumerator Start()
     {
         materialCollection = new Material[HouseData.selectedHouse.images.Length];
 
@@ -54,13 +51,16 @@ public class RoomLoader : MonoBehaviour
                 //miniSphere.GetComponent<MeshRenderer>().material.mainTexture = imageTexture;
               //  materialCollection[i].SetTexture("_MainTex", imageTexture);
                 materialCollection[i].SetTexture("_MainTex", imageTextureMipMap);
-                sphere.GetComponent<MeshRenderer>().material = materialCollection[i];
 
+                
+                slider.value = Mathf.Clamp01((float)(i + 1) / HouseData.selectedHouse.images.Length);
+                Debug.Log(slider.value);
                 Debug.Log("Breakpoint");
                 
             }
 
                 
         }
+        sphere.GetComponent<MeshRenderer>().material = materialCollection[HouseData.selectedHouse.images.Length - 1];
     }  
 }
