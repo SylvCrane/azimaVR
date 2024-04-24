@@ -12,6 +12,11 @@ public class RoomLoader : MonoBehaviour
     public GameObject miniSphere;
     public bool startImageAssigned;
     public Slider slider;
+    public GameObject loadingScreen;
+    public GameObject loadingImages;
+    public GameObject loadingPortals;
+    public GameObject cam;
+    public GameObject portalContainer;
 
     // Start is called before the first frame update
     IEnumerator Start()
@@ -32,35 +37,65 @@ public class RoomLoader : MonoBehaviour
             {
                 //Declaring the current indexed material and assigning it to a Skybox for use in the sphere. Then, get the image texture and assign it to the material.
                 materialCollection[i] = new Material(Shader.Find("Skybox/Panoramic"));
-                materialCollection[i].name = HouseData.selectedHouse.houseID;
+                materialCollection[i].name = HouseData.selectedHouse.images[i].name;
                 Texture2D imageTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
                 Texture2D imageTextureMipMap = new Texture2D(imageTexture.width, imageTexture.height, imageTexture.format, false);
 
                 Color[] pixerls = imageTexture.GetPixels();
                 imageTextureMipMap.SetPixels(pixerls);
                 imageTextureMipMap.Apply();
-                
-                
-                //Graphics.CopyTexture(imageTexture, imageTextureMipMap);
-                
-                
-                
-                imageTexture.filterMode = FilterMode.Point;
-                
-
-                //miniSphere.GetComponent<MeshRenderer>().material.mainTexture = imageTexture;
-              //  materialCollection[i].SetTexture("_MainTex", imageTexture);
+                imageTextureMipMap.filterMode = FilterMode.Point;
                 materialCollection[i].SetTexture("_MainTex", imageTextureMipMap);
 
-                
-                slider.value = Mathf.Clamp01((float)(i + 1) / HouseData.selectedHouse.images.Length);
-                Debug.Log(slider.value);
-                Debug.Log("Breakpoint");
-                
+                //Slider for loading screen
+                float slideValueDefault = ((float)(i + 1) / HouseData.selectedHouse.images.Length);
+                float slideValueHalf = (float)(slideValueDefault / 2);
+                Debug.Log(slideValueHalf);
+                slider.value = Mathf.Clamp01(slideValueHalf);
+                if (slider.value == 0.5)
+                {
+                    loadingImages.SetActive(false);
+                    loadingPortals.SetActive(true);
+                    yield return new WaitForSeconds(0.5f);
+                }                
+            }   
+        }
+
+        //Portal Loader
+        for (int i = 0; i < HouseData.selectedHouse.portals.Length; i++)
+        {
+            Portal newPortal = new Portal();
+            string color = HouseData.selectedHouse.portals[i].triangles[0].color.Substring(1);
+
+            Vector3 bottomLeft = newPortal.splitVertex(HouseData.selectedHouse.portals[i].triangles[0].vertexA);
+            Vector3 bottomRight = newPortal.splitVertex(HouseData.selectedHouse.portals[i].triangles[0].vertexB);
+            Vector3 topLeft = newPortal.splitVertex(HouseData.selectedHouse.portals[i].triangles[0].vertexC);
+            Vector3 topRight = newPortal.splitVertex(HouseData.selectedHouse.portals[i].triangles[2].vertexB);
+
+            newPortal.assignVertices(bottomLeft, bottomRight, topLeft, topRight);
+            newPortal.destination = HouseData.selectedHouse.portals[i].destination;
+
+            newPortal.GeneratePortal(HouseData.selectedHouse.portals[i].location, color);
+
+            Vector3 textLocation = newPortal.splitVertex(HouseData.selectedHouse.portals[i].textData.position);
+            newPortal.GenerateText(textLocation, HouseData.selectedHouse.portals[i].textData.rotation.x, -HouseData.selectedHouse.portals[i].textData.rotation.y, HouseData.selectedHouse.portals[i].textData.rotation.z);
+
+            newPortal.setParentOfPortal(portalContainer);
+
+            float slideValueDefault = ((float)(i + 1) / HouseData.selectedHouse.portals.Length);
+            float slideValueHalf = (float)(slideValueDefault / 2);
+            float slideValueHalfTotal = (float)(slideValueHalf + 0.5);
+            
+            slider.value = Mathf.Clamp01(slideValueHalfTotal);
+            if (slider.value == 1.0)
+            {
+                yield return new WaitForSeconds(0.5f);
             }
 
-                
         }
-        sphere.GetComponent<MeshRenderer>().material = materialCollection[HouseData.selectedHouse.images.Length - 1];
+
+        sphere.GetComponent<MeshRenderer>().material = materialCollection[0];
+        loadingScreen.SetActive(false);
+        cam.GetComponent<PortalClick>().enabled = true;
     }  
 }

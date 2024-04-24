@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - House
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: New Layer 1
+    uniqueID: 2846521523
+    locked: 0
+  - name: New Layer 2
+    uniqueID: 1583315113
+    locked: 0
+  - name: New Layer 3
+    uniqueID: 1485451935
     locked: 0

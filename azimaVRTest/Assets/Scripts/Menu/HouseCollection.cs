@@ -118,9 +118,11 @@ public class HouseCollection
             currentHouse.portals[i].textData.rotation = new Rotation();
         }
 
+        int index = 0;
+
         foreach (JSONNode portal in portalCollection)
         {
-            int i = 0;
+            
             int j = 0;
 
             JSONArray textData = portal["textData"].AsArray;
@@ -129,12 +131,12 @@ public class HouseCollection
             foreach(JSONNode textDataSpecific in textData)
             {
                 rotation = textDataSpecific["rotation"];
-                currentHouse.portals[i].textData.rotation.x = rotation["x"].AsDouble;
-                currentHouse.portals[i].textData.rotation.y = rotation["y"].AsDouble;
-                currentHouse.portals[i].textData.rotation.z = rotation["z"].AsDouble;
+                currentHouse.portals[index].textData.rotation.x = rotation["x"].AsDouble;
+                currentHouse.portals[index].textData.rotation.y = rotation["y"].AsDouble;
+                currentHouse.portals[index].textData.rotation.z = rotation["z"].AsDouble;
 
-                currentHouse.portals[i].textData.value = textDataSpecific["value"];
-                currentHouse.portals[i].textData.position = textDataSpecific["position"];
+                currentHouse.portals[index].textData.value = textDataSpecific["value"];
+                currentHouse.portals[index].textData.position = textDataSpecific["position"];
             }
 
             JSONArray triangleCollection = portal["triangles"].AsArray;
@@ -143,18 +145,18 @@ public class HouseCollection
 
             foreach (JSONNode triangle in triangleCollection)
             {
-                currentHouse.portals[i].triangles[j].vertexA = triangle["vertexA"];
-                currentHouse.portals[i].triangles[j].vertexB = triangle["vertexB"];
-                currentHouse.portals[i].triangles[j].vertexC = triangle["vertexC"];
-                currentHouse.portals[i].triangles[j].color = triangle["color"];
+                currentHouse.portals[index].triangles[j].vertexA = triangle["vertexA"];
+                currentHouse.portals[index].triangles[j].vertexB = triangle["vertexB"];
+                currentHouse.portals[index].triangles[j].vertexC = triangle["vertexC"];
+                currentHouse.portals[index].triangles[j].color = triangle["color"];
 
                 j++;
             }
 
-            currentHouse.portals[i].destination = portal["destination"];
-            currentHouse.portals[i].location = portal["location"];
+            currentHouse.portals[index].destination = portal["destination"];
+            currentHouse.portals[index].location = portal["location"];
 
-            i++;
+            index++;
         }
     }
 }
