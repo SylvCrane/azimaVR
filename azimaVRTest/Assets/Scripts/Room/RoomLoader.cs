@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Oculus.Interaction;
+using UnityEditor.Build;
+using UnityEditor;
+
 
 //Class loads images for room as materials and assigns them to the materialCollection array
 public class RoomLoader : MonoBehaviour
@@ -17,10 +21,13 @@ public class RoomLoader : MonoBehaviour
     public GameObject loadingPortals;
     public GameObject cam;
     public GameObject portalContainer;
+    public GameObject portalReference;
 
     // Start is called before the first frame update
     IEnumerator Start()
     {
+        //Android.
+        EditorUserBuildSettings.overrideMaxTextureSize = 8192;
         materialCollection = new Material[HouseData.selectedHouse.images.Length];
 
         //For each image, a separate pull must occur. 
@@ -40,11 +47,12 @@ public class RoomLoader : MonoBehaviour
                 materialCollection[i].name = HouseData.selectedHouse.images[i].name;
                 Texture2D imageTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
                 Texture2D imageTextureMipMap = new Texture2D(imageTexture.width, imageTexture.height, imageTexture.format, false);
-
+                //imageTextureMipMap.
                 Color[] pixerls = imageTexture.GetPixels();
                 imageTextureMipMap.SetPixels(pixerls);
                 imageTextureMipMap.Apply();
-                imageTextureMipMap.filterMode = FilterMode.Point;
+                imageTextureMipMap.filterMode = FilterMode.Bilinear;
+  
                 materialCollection[i].SetTexture("_MainTex", imageTextureMipMap);
 
                 //Slider for loading screen
@@ -64,7 +72,9 @@ public class RoomLoader : MonoBehaviour
         //Portal Loader
         for (int i = 0; i < HouseData.selectedHouse.portals.Length; i++)
         {
+#pragma warning disable CS0436 // Type conflicts with imported type
             Portal newPortal = new Portal();
+#pragma warning restore CS0436 // Type conflicts with imported type
             string color = HouseData.selectedHouse.portals[i].triangles[0].color.Substring(1);
 
             Vector3 bottomLeft = newPortal.splitVertex(HouseData.selectedHouse.portals[i].triangles[0].vertexA);
@@ -75,12 +85,27 @@ public class RoomLoader : MonoBehaviour
             newPortal.assignVertices(bottomLeft, bottomRight, topLeft, topRight);
             newPortal.destination = HouseData.selectedHouse.portals[i].destination;
 
+            GameObject portalRef = Instantiate(portalReference);
+            portalRef.SetActive(true);
+            newPortal.portal = portalRef;
+
             newPortal.GeneratePortal(HouseData.selectedHouse.portals[i].location, color);
 
             Vector3 textLocation = newPortal.splitVertex(HouseData.selectedHouse.portals[i].textData.position);
             newPortal.GenerateText(textLocation, HouseData.selectedHouse.portals[i].textData.rotation.x, -HouseData.selectedHouse.portals[i].textData.rotation.y, HouseData.selectedHouse.portals[i].textData.rotation.z);
 
             newPortal.setParentOfPortal(portalContainer);
+
+            //Seting Portal hold content, crucial for raycasting
+            newPortal.portal.GetComponent<PortalHold>().sphere = sphere;
+            newPortal.portal.GetComponent<PortalHold>().RoomLoader = gameObject;
+            newPortal.portal.GetComponent<PortalHold>().portalContainer = portalContainer;
+
+
+            
+            newPortal.AddRayCastFunctionality();
+            //Raycast setting
+            
 
             float slideValueDefault = ((float)(i + 1) / HouseData.selectedHouse.portals.Length);
             float slideValueHalf = (float)(slideValueDefault / 2);
@@ -95,6 +120,15 @@ public class RoomLoader : MonoBehaviour
         }
 
         sphere.GetComponent<MeshRenderer>().material = materialCollection[0];
+
+        foreach(Transform portal in portalContainer.transform)
+        {
+            if (portal.name != materialCollection[0].name)
+            {
+                portal.gameObject.SetActive(false);
+            }
+        }
+
         loadingScreen.SetActive(false);
         cam.GetComponent<PortalClick>().enabled = true;
     }  

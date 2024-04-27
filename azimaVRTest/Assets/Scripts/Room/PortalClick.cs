@@ -25,7 +25,7 @@ public class PortalClick : MonoBehaviour
             
             if (hitInfo.collider.gameObject.GetComponent<PortalHold>())
             {
-                hitInfo.collider.gameObject.GetComponent<PortalHold>().changeMaterialToOpaque();
+                hitInfo.collider.gameObject.GetComponent<PortalHold>().ChangeMaterialToOpaque();
                 portalStore = hitInfo.collider.gameObject;
                 inPortal = true;
             }
@@ -34,7 +34,7 @@ public class PortalClick : MonoBehaviour
         {
             if (portalStore != null)
             {
-                portalStore.GetComponent<PortalHold>().changeMaterialToTransparent();
+                portalStore.GetComponent<PortalHold>().ChangeMaterialToTransparent();
                 portalStore = null;
                 inPortal = false;
             }

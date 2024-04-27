@@ -1,7 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Packages;
+using Oculus.Interaction.Surfaces;
+using Oculus.Interaction;
+using UnityEngine.Events;
 
 public class Portal 
 {
@@ -103,19 +105,17 @@ public class Portal
     public void GeneratePortal(string location, string color)
     {
         //Create portal and assign 
-        GameObject newPortal = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        newPortal.name = location;
-        newPortal.transform.localScale = new Vector3(1, 1, -1);
-        newPortal.AddComponent<PortalHold>();
-        newPortal.GetComponent<PortalHold>().destination = destination;
+        portal.name = location;
+        portal.transform.localScale = new Vector3(1, 1, -1);
+        portal.GetComponent<PortalHold>().destination = destination;
 
         string portalName = "PortalMaterials/" + color;
         string portalOpaqueName = "PortalMaterials/" + color + "Opaque";
 
-        newPortal.GetComponent<PortalHold>().portalColor = Resources.Load<Material>(portalName);
-        newPortal.GetComponent<PortalHold>().portalOpaque = Resources.Load<Material>(portalOpaqueName);
-        newPortal.GetComponent<PortalHold>().location = location;
-        newPortal.GetComponent<MeshRenderer>().sharedMaterial = newPortal.GetComponent<PortalHold>().portalColor;
+        portal.GetComponent<PortalHold>().portalColor = Resources.Load<Material>(portalName);
+        portal.GetComponent<PortalHold>().portalOpaque = Resources.Load<Material>(portalOpaqueName);
+        portal.GetComponent<PortalHold>().location = location;
+        portal.GetComponent<MeshRenderer>().sharedMaterial = portal.GetComponent<PortalHold>().portalColor;
 
         Mesh mesh = new Mesh();
 
@@ -185,9 +185,27 @@ public class Portal
         mesh.RecalculateNormals();
 
 
-        newPortal.GetComponent<MeshFilter>().mesh = mesh;
-        newPortal.GetComponent<MeshCollider>().sharedMesh = mesh;
+        portal.GetComponent<MeshFilter>().mesh = mesh;
+        portal.GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        portal = newPortal;
+        //Add RayCast functionality
+        portal.GetComponent<RayInteractable>().enabled = true;
+
+        portal.GetComponent<ColliderSurface>().InjectCollider(portal.GetComponent<MeshCollider>());
+        portal.GetComponent<RayInteractable>().InjectSurface(portal.GetComponent<ColliderSurface>());
+    }
+
+    public void AddRayCastFunctionality()
+    {
+        portal.GetComponent<InteractableUnityEventWrapper>().InjectInteractableView(portal.GetComponent<RayInteractable>());
+        portal.GetComponent<InteractableUnityEventWrapper>().enabled = true;
+ 
+
+
+       // portal.GetComponent<InteractableUnityEventWrapper>().WhenHover = 
+
+        //portal.GetComponent<InteractableUnityEventWrapper>().WhenHover.AddListener(portal.GetComponent<PortalHold>().ChangeMaterialToOpaque());
+
+
     }
 }
