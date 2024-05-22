@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
+using UnityEngine.UI;
 
 public class pullHouses : MonoBehaviour
 {
-    public House tempHouses;
     public GameObject houseList;
+    public Sprite defaultThumb;
 
 
     // Start is called before the first frame update
@@ -25,7 +26,7 @@ public class pullHouses : MonoBehaviour
 
     IEnumerator Download(System.Action<HouseCollection> caller = null)
     {
-        using (UnityWebRequest request = UnityWebRequest.Get("http://localhost:8082/api/house"))
+        using (UnityWebRequest request = UnityWebRequest.Get("https://azima.onrender.com/api/house/house/public"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
 
@@ -45,14 +46,6 @@ public class pullHouses : MonoBehaviour
 
     public void processHouse(HouseCollection data)
     {
-        tempHouses = new House();
-        tempHouses.images = new Images[data.houses[0].images.Length];
-
-        for (int i = 0; i < tempHouses.images.Length; i++)
-        {
-            tempHouses.images[i] = new Images();
-        }
-
         GameObject blankHouse = houseList.transform.GetChild(0).gameObject;
         GameObject nonOverWrittenHouse = blankHouse;
 
@@ -83,28 +76,53 @@ public class pullHouses : MonoBehaviour
     {
         subjectHouse.transform.Find("houseStore").GetComponent<houseStorage>().specificHouse = currentHouseData;
 
-        TextMeshProUGUI locationText = subjectHouse.transform.Find("houseName").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI locationText = subjectHouse.transform.Find("houseAddress").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI priceText = subjectHouse.transform.Find("Price").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI bedroomText = subjectHouse.transform.Find("BedroomNum").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI bathroomText = subjectHouse.transform.Find("BathroomNum").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI livingRoomText = subjectHouse.transform.Find("LivingRoomNum").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI sqFootageText = subjectHouse.transform.Find("SqFootageNum").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI kitchenText = subjectHouse.transform.Find("KitchenNum").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI backyardText = subjectHouse.transform.Find("Backyard?").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI laundryRoomText = subjectHouse.transform.Find("LaundryRoom?").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI dateText = subjectHouse.transform.Find("DateTimeNum").GetComponent<TextMeshProUGUI>();
+        Image thumbImage = subjectHouse.transform.Find("ShowcaseImage").GetComponent<Image>();
+        TextMeshProUGUI authorText = subjectHouse.transform.Find("author").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI houseName = subjectHouse.transform.Find("houseName").GetComponent<TextMeshProUGUI>();
 
+        StartCoroutine(PullThumbImage(currentHouseData, thumbImage));
+
+        authorText.text = currentHouseData.author;
         locationText.text = currentHouseData.location;
         priceText.text = currentHouseData.price.ToString();
+        priceText.text += "/w";
         bedroomText.text = currentHouseData.rooms.ToString();
         bathroomText.text = currentHouseData.bathrooms.ToString();
         livingRoomText.text = currentHouseData.livingAreas.ToString();
         sqFootageText.text = currentHouseData.sqFootage.ToString();
-        kitchenText.text = currentHouseData.kitchen.ToString();
+        houseName.text = currentHouseData.houseName;
 
-        backyardText.text = (currentHouseData.backyard) ? "True" : "False";
-        laundryRoomText.text = (currentHouseData.laundryRoom) ? "True" : "False";
-
-        dateText.text = currentHouseData.dateListed;
     }
+
+    IEnumerator PullThumbImage(House currentHouse, Image thumb)
+    {
+        if (currentHouse.thumbnail != null)
+        {
+            UnityWebRequest request = UnityWebRequestTexture.GetTexture(currentHouse.thumbnail);
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(request.error);
+            }
+            else
+            {
+                Texture2D imageTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
+                thumb.sprite = Sprite.Create(imageTexture, new Rect(0, 0, imageTexture.width, imageTexture.height), new Vector2 ());
+
+            }
+        }
+        else
+        {
+            thumb.sprite = defaultThumb;
+        }
+    }
+
+ 
 }

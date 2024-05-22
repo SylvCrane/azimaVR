@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Oculus.Interaction;
-using UnityEditor.Build;
 using UnityEditor;
 
 
@@ -22,12 +21,15 @@ public class RoomLoader : MonoBehaviour
     public GameObject cam;
     public GameObject portalContainer;
     public GameObject portalReference;
+    public GameObject menuPlane;
+    public ImageLoader imageLoader;
+    public GameObject imageHand;
+    public GameObject imageList;
 
     // Start is called before the first frame update
     IEnumerator Start()
     {
         //Android.
-        EditorUserBuildSettings.overrideMaxTextureSize = 8192;
         materialCollection = new Material[HouseData.selectedHouse.images.Length];
 
         //For each image, a separate pull must occur. 
@@ -51,7 +53,7 @@ public class RoomLoader : MonoBehaviour
                 Color[] pixerls = imageTexture.GetPixels();
                 imageTextureMipMap.SetPixels(pixerls);
                 imageTextureMipMap.Apply();
-                imageTextureMipMap.filterMode = FilterMode.Bilinear;
+                imageTextureMipMap.filterMode = FilterMode.Point;
   
                 materialCollection[i].SetTexture("_MainTex", imageTextureMipMap);
 
@@ -91,9 +93,13 @@ public class RoomLoader : MonoBehaviour
 
             newPortal.GeneratePortal(HouseData.selectedHouse.portals[i].location, color);
 
-            Vector3 textLocation = newPortal.splitVertex(HouseData.selectedHouse.portals[i].textData.position);
-            newPortal.GenerateText(textLocation, HouseData.selectedHouse.portals[i].textData.rotation.x, -HouseData.selectedHouse.portals[i].textData.rotation.y, HouseData.selectedHouse.portals[i].textData.rotation.z);
-
+            //In if statement as some portals are in the same room, therefore do not need text tags
+            if (HouseData.selectedHouse.portals[i].textData.position != null)
+            {
+                Vector3 textLocation = newPortal.splitVertex(HouseData.selectedHouse.portals[i].textData.position);
+                newPortal.GenerateText(textLocation, HouseData.selectedHouse.portals[i].textData.rotation.x, -HouseData.selectedHouse.portals[i].textData.rotation.y, HouseData.selectedHouse.portals[i].textData.rotation.z);
+            }
+         
             newPortal.setParentOfPortal(portalContainer);
 
             //Seting Portal hold content, crucial for raycasting
@@ -101,11 +107,6 @@ public class RoomLoader : MonoBehaviour
             newPortal.portal.GetComponent<PortalHold>().RoomLoader = gameObject;
             newPortal.portal.GetComponent<PortalHold>().portalContainer = portalContainer;
 
-
-            
-            newPortal.AddRayCastFunctionality();
-            //Raycast setting
-            
 
             float slideValueDefault = ((float)(i + 1) / HouseData.selectedHouse.portals.Length);
             float slideValueHalf = (float)(slideValueDefault / 2);
@@ -129,7 +130,18 @@ public class RoomLoader : MonoBehaviour
             }
         }
 
+        imageLoader.loadImagesOnHand(materialCollection);
+
         loadingScreen.SetActive(false);
+        menuPlane.SetActive(true);
+        menuPlane.transform.GetChild(0).gameObject.SetActive(true);
+        menuPlane.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(true);
+        menuPlane.transform.GetChild(0).transform.GetChild(3).gameObject.SetActive(false);
+        imageHand.SetActive(true);
+        imageHand.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(true);
+        imageHand.transform.GetChild(0).transform.GetChild(3).gameObject.SetActive(false);
         cam.GetComponent<PortalClick>().enabled = true;
-    }  
+
+        imageList.transform.GetChild(0).gameObject.GetComponent<Image>().color = new Color(255, 0, 0);
+    }
 }

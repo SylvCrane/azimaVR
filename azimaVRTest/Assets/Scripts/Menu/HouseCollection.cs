@@ -10,8 +10,11 @@ public class HouseCollection
     public static HouseCollection ParseHouseCollection(string json)
     {
         HouseCollection newHouses = new HouseCollection();
-         
-        JSONArray houseCollectionJSON = JSON.Parse(json).AsArray;
+
+        JSONNode HouseDataCollectionNode = JSON.Parse(json);
+        JSONArray houseCollectionJSON = HouseDataCollectionNode["data"].AsArray;
+
+        //JSONArray houseCollectionJSON = JSON.Parse(HouseDataCollectionString).AsArray;
 
         newHouses.houses = new House[houseCollectionJSON.Count];
 
@@ -51,8 +54,13 @@ public class HouseCollection
             newHouses.houses[houseNum].rooms = house["rooms"].AsInt;
             newHouses.houses[houseNum].bathrooms = house["bathrooms"].AsInt;
             newHouses.houses[houseNum].livingAreas = house["livingAreas"].AsInt;
-            newHouses.houses[houseNum].sqFootage = house["livingAreas"].AsDouble;
-            newHouses.houses[houseNum].price = house["price"].AsDouble;
+
+            JSONNode sqFootage = house["sqFootage"];
+            JSONNode price = house["price"];
+
+            newHouses.houses[houseNum].sqFootage = sqFootage["$numberDecimal"].AsDouble;
+            newHouses.houses[houseNum].price = price["$numberDecimal"].AsDouble;
+            newHouses.houses[houseNum].author = house["author"];
 
             parseDate(newHouses.houses[houseNum], house);
            // newHouses.houses[houseNum].dateListed = house["dateListed"];
@@ -60,6 +68,12 @@ public class HouseCollection
             newHouses.houses[houseNum].kitchen = house["kitchen"].AsInt;
             newHouses.houses[houseNum].backyard = house["backyard"].AsBool;
             newHouses.houses[houseNum].laundryRoom = house["laundryRoom"].AsBool;
+            newHouses.houses[houseNum].houseName = house["houseName"];
+            
+            if (house["thumbnail"] != null)
+            {
+                newHouses.houses[houseNum].thumbnail = house["thumbnail"];
+            }
 
             processPortal(newHouses.houses[houseNum], house);
 

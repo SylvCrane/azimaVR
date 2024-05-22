@@ -19,6 +19,9 @@ public class House
     public int kitchen;
     public bool backyard;
     public bool laundryRoom;
+    public string thumbnail;
+    public string author;
+    public string houseName;
 
     public static House ParseHouse(string json)
     {

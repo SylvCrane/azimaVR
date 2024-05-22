@@ -1,9 +1,7 @@
 using UnityEngine;
 using TMPro;
-using Packages;
 using Oculus.Interaction.Surfaces;
 using Oculus.Interaction;
-using UnityEngine.Events;
 
 public class Portal 
 {
@@ -193,19 +191,5 @@ public class Portal
 
         portal.GetComponent<ColliderSurface>().InjectCollider(portal.GetComponent<MeshCollider>());
         portal.GetComponent<RayInteractable>().InjectSurface(portal.GetComponent<ColliderSurface>());
-    }
-
-    public void AddRayCastFunctionality()
-    {
-        portal.GetComponent<InteractableUnityEventWrapper>().InjectInteractableView(portal.GetComponent<RayInteractable>());
-        portal.GetComponent<InteractableUnityEventWrapper>().enabled = true;
- 
-
-
-       // portal.GetComponent<InteractableUnityEventWrapper>().WhenHover = 
-
-        //portal.GetComponent<InteractableUnityEventWrapper>().WhenHover.AddListener(portal.GetComponent<PortalHold>().ChangeMaterialToOpaque());
-
-
     }
 }
