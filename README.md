@@ -39,7 +39,13 @@ Furthermore, there are some Unity assets that the developer must download and in
 
 -	For deploying, make sure that you have allowed for development and debugging on  your Headset (A popup should appear when you connect it to your PC on the headset). Then, DO NOT enter Quest Link.  
 
--	In Unity, go to File->Build Settings. Here, you can configure the settings when building the application as an APK. Note that the build is in Android and is outputting to the Oculus Quest. If you performed the previous steps correctly, this should be the case. 
+-	In Unity, go to File->Build Settings. Here, you can configure the settings when building the application as an APK. Note that the build is in Android and is outputting to the Oculus Quest. If you performed the previous steps correctly, this should be the case.
+
+# Authors
+
+This project was developed by the following developers:
+
+- Navjot Sandhu
 
 # References
 The following downloaded assets were used at some point during the development of 
