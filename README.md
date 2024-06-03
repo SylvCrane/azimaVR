@@ -79,3 +79,12 @@ Located in Resources->DownloadedAssets->Photoscanned Grounds Materials Sample
 SimpleJSON by bunny83
 https://github.com/Bunny83/SimpleJSON/blob/master/SimpleJSONUnity.cs
 Located in Plugins
+
+Magical fast wind whoosh 5 by ZapSplat https://www.zapsplat.com/music/magical-fast-wind-whoosh-5/
+Located in Resources->Sound
+
+Cellphone, smartphone vibrate on wood surface, two blips by ZapSplat
+https://www.zapsplat.com/music/cellphone-smartphone-vibrate-on-wood-surface-two-blips/
+
+Not Even Worried by Riverworn https://www.epidemicsound.com/track/V5NDGhqbWR/
+
