@@ -9,18 +9,19 @@ The VR Application is primarily intended for use with the Meta Quest headsets, s
 # Prerequisites
 
 Before beginning, the developer must have the following items installed on their machine: 
-•	Unity Hub: This allows the developer to open Unity projects 
-o	By extension, the developer requires a Unity account 
-•	Unity Version 2022.3.24f1.  
-•	Git: Required for pulling the repository 
-o	By extension, the developer requires a GitHub account 
-•	GIT LFS (Large File System): Used to process files larger than 100MB for Git pushes. 
-•	IDE: The recommended IDE is Visual Studio 2019. This can be installed with Unity. 
-•	Oculus Desktop App: Used for communicating with the Meta Headset for debugging purposes 
+- Unity Hub: This allows the developer to open Unity projects
+  - By extension, the developer requires a Unity account 
+- Unity Version 2022.3.24f1.  
+- Git: Required for pulling the repository 
+  - By extension, the developer requires a GitHub account 
+- GIT LFS (Large File System): Used to process files larger than 100MB for Git pushes. 
+- IDE: The recommended IDE is Visual Studio 2019. This can be installed with Unity. 
+- Oculus Desktop App: Used for communicating with the Meta Headset for debugging purposes
+
 Furthermore, there are some Unity assets that the developer must download and install. They are) 
-•	Meta XR Core SDK https://assetstore.unity.com/packages/tools/integration/meta-xr-core-sdk-269169 
-•	Meta XR Interaction SDK https://assetstore.unity.com/packages/tools/integration/meta-xr-interaction-sdk-ovr-samples-268521 
-•	GitHub Desktop: Allows for easy local and online Git manipulation, including cloning repositories and managing branches. 
+- Meta XR Core SDK https://assetstore.unity.com/packages/tools/integration/meta-xr-core-sdk-269169
+- Meta XR Interaction SDK https://assetstore.unity.com/packages/tools/integration/meta-xr-interaction-sdk-ovr-samples-268521 
+- GitHub Desktop: Allows for easy local and online Git manipulation, including cloning repositories and managing branches. 
 
 # Installation
 
