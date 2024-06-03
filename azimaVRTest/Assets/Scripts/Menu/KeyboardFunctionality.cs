@@ -4,24 +4,48 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+//Used for the keyboards. Because of how this is structured, I will not be appending comments for each
+//function as tehy are relatively straightforward.
 public class KeyboardFunctionality : MonoBehaviour
 {
-    public TMP_InputField houseSearch;
-    public GameObject letterKeyBoard;
-    public GameObject symbolKeyBoard;
-    public bool capital;
+    
+    public TMP_InputField houseSearch; //The field that is appended to
+    public GameObject letterKeyBoard; //The letter portion of the keyboard
+    public GameObject symbolKeyBoard; //The symbol portion of the keyboard
+    public bool capital; //Whether the capital button is pressed
 
+    /*
+     * Used for when the user presses the back button.
+     */
     public void BackButtonPressed()
     {
-        houseSearch.text = houseSearch.text.Substring(0, houseSearch.text.Length - 1);
+        if (houseSearch.caretPosition == 1)
+        {
+            //delete first character
+            houseSearch.text = houseSearch.text.Substring(1);
+        }
+        else if ((houseSearch.caretPosition > 1) && (houseSearch.caretPosition < houseSearch.text.Length))
+        {
+            //delete character in middle of string
+            houseSearch.text = houseSearch.text.Substring(0, houseSearch.caretPosition - 1) + houseSearch.text.Substring(houseSearch.caretPosition);
+        }
+        else
+        {
+            //delete end 
+            houseSearch.text = houseSearch.text.Substring(0, houseSearch.text.Length - 1);
+        }
+       
+        
     }
 
+    //Switches to the letter keyboard
     public void SymbolButtonPressed()
     {
         letterKeyBoard.SetActive(false);
         symbolKeyBoard.SetActive(true);
     }
-
+    
+    //Switches to the symbol keyboard
     public void LetterButtonPressed()
     {
         letterKeyBoard.SetActive(true);

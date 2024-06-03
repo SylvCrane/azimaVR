@@ -3,21 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using OVRSimpleJSON;
 
+//Used to parse collection of houses
 public class HouseCollection
 {
+    //House array
     public House[] houses;
 
+    /*
+     * Used to parse the JSON Data containing each house into useable house data. 
+     * 
+     * Returns a houseCollection of useable houses.
+     * 
+     * Params;
+     * - json) The string containing the public houses in JSON
+     */
     public static HouseCollection ParseHouseCollection(string json)
     {
         HouseCollection newHouses = new HouseCollection();
 
+        //Declare JSONArray from SimpleJSON, then set collection of houses to number of objects in array
         JSONNode HouseDataCollectionNode = JSON.Parse(json);
         JSONArray houseCollectionJSON = HouseDataCollectionNode["data"].AsArray;
-
-        //JSONArray houseCollectionJSON = JSON.Parse(HouseDataCollectionString).AsArray;
-
         newHouses.houses = new House[houseCollectionJSON.Count];
 
+        //Instantiate each new house
         for (int i = 0; i < houseCollectionJSON.Count; i++)
         {
             newHouses.houses[i] = new House();
@@ -25,16 +34,16 @@ public class HouseCollection
 
         int houseNum = 0;
 
-        foreach (JSONNode house in houseCollectionJSON)
+        //Loop through each of the JSON houses to assign to houseCollectionJSON
+        foreach (JSONNode houseJSON in houseCollectionJSON)
         {
-            Debug.Log(house["houseID"]);
-            newHouses.houses[houseNum].houseID = house["houseID"];
-            Debug.Log(house[newHouses.houses[houseNum].houseID]);
-            //houses[houseNum].portals = house["portals"];
+            newHouses.houses[houseNum].houseID = houseJSON["houseID"];
 
-            JSONArray imagesCollection = house["images"].AsArray;
+            //Set collection of images
+            JSONArray imagesCollection = houseJSON["images"].AsArray;
             newHouses.houses[houseNum].images = new Images[imagesCollection.Count];
 
+            //Instantiate each new image
             for (int i = 0; i < imagesCollection.Count; i++)
             {
                 newHouses.houses[houseNum].images[i] = new Images();
@@ -42,6 +51,7 @@ public class HouseCollection
 
             int imageNum = 0;
 
+            //Set each piece of data to the images in the houseCollection.
             foreach (JSONNode image in imagesCollection)
             {
                 newHouses.houses[houseNum].images[imageNum].houseID = image["houseID"];
@@ -51,31 +61,31 @@ public class HouseCollection
                 imageNum++;
             }
 
-            newHouses.houses[houseNum].rooms = house["rooms"].AsInt;
-            newHouses.houses[houseNum].bathrooms = house["bathrooms"].AsInt;
-            newHouses.houses[houseNum].livingAreas = house["livingAreas"].AsInt;
+            newHouses.houses[houseNum].rooms = houseJSON["rooms"].AsInt;
+            newHouses.houses[houseNum].bathrooms = houseJSON["bathrooms"].AsInt;
+            newHouses.houses[houseNum].livingAreas = houseJSON["livingAreas"].AsInt;
 
-            JSONNode sqFootage = house["sqFootage"];
-            JSONNode price = house["price"];
+            JSONNode sqFootage = houseJSON["sqFootage"];
+            JSONNode price = houseJSON["price"];
 
             newHouses.houses[houseNum].sqFootage = sqFootage["$numberDecimal"].AsDouble;
             newHouses.houses[houseNum].price = price["$numberDecimal"].AsDouble;
-            newHouses.houses[houseNum].author = house["author"];
+            newHouses.houses[houseNum].author = houseJSON["author"];
 
-            parseDate(newHouses.houses[houseNum], house);
-           // newHouses.houses[houseNum].dateListed = house["dateListed"];
-            newHouses.houses[houseNum].location = house["location"];
-            newHouses.houses[houseNum].kitchen = house["kitchen"].AsInt;
-            newHouses.houses[houseNum].backyard = house["backyard"].AsBool;
-            newHouses.houses[houseNum].laundryRoom = house["laundryRoom"].AsBool;
-            newHouses.houses[houseNum].houseName = house["houseName"];
+            //Date is complicated in JSON form, so separate function declared
+            parseDate(newHouses.houses[houseNum], houseJSON);
+            newHouses.houses[houseNum].location = houseJSON["location"];
+            newHouses.houses[houseNum].kitchen = houseJSON["kitchen"].AsInt;
+            newHouses.houses[houseNum].backyard = houseJSON["backyard"].AsBool;
+            newHouses.houses[houseNum].laundryRoom = houseJSON["laundryRoom"].AsBool;
+            newHouses.houses[houseNum].houseName = houseJSON["houseName"];
             
-            if (house["thumbnail"] != null)
+            if (houseJSON["thumbnail"] != null)
             {
-                newHouses.houses[houseNum].thumbnail = house["thumbnail"];
+                newHouses.houses[houseNum].thumbnail = houseJSON["thumbnail"];
             }
 
-            processPortal(newHouses.houses[houseNum], house);
+            processPortal(newHouses.houses[houseNum], houseJSON);
 
             houseNum++;
         }
@@ -83,8 +93,16 @@ public class HouseCollection
         return newHouses;
     }
 
+    /*
+     * Parses the date value
+     * 
+     * Params)
+     * - currentHouse) THe current house that ius being processed
+     * - jsonHouse) the JSON data for that house
+     */
     public static void parseDate(House currentHouse, JSONNode jsonHouse)
     {
+        //Set houseData to loop through, and empty strings for date
         string houseDate = jsonHouse["dateListed"];
         string year = "";
         string month = "";
@@ -92,6 +110,7 @@ public class HouseCollection
 
         int i = 0;
 
+        //Data ends at 10th string, so loops until 11th character
         while (i < 10)
         {
             if (i < 4)
@@ -110,19 +129,31 @@ public class HouseCollection
             i++;
         }
 
+        //Append as abbreviated date
         currentHouse.dateListed = day + "/" + month + "/" + year;
     }
 
+    /*
+     * Processes the portal data into the house.
+     * 
+     * Params) 
+     * - currentHouse) The current house that is being processed
+     * - jsonHouse) The JSON data for that house
+     * 
+     */
     public static void processPortal(House currentHouse, JSONNode jsonHouse)
     {
+        //Assign portal data to a JSONArray and make currentHouse portals be the same number of portals as in the array
         JSONArray portalCollection = jsonHouse["portals"].AsArray;
         currentHouse.portals = new Portals[portalCollection.Count];
 
+        //Declare each portal for the currentHouse depending on the number of portals
         for (int i = 0; i < portalCollection.Count; i++)
         {
             currentHouse.portals[i] = new Portals();
             currentHouse.portals[i].triangles = new Triangles[4];
 
+            //Each portal has four triangles
             currentHouse.portals[i].triangles[0] = new Triangles();
             currentHouse.portals[i].triangles[1] = new Triangles();
             currentHouse.portals[i].triangles[2] = new Triangles();
@@ -132,45 +163,52 @@ public class HouseCollection
             currentHouse.portals[i].textData.rotation = new Rotation();
         }
 
-        int index = 0;
+        int currentPortal = 0;
 
+        //Loop through each portal in the collection
         foreach (JSONNode portal in portalCollection)
         {
-            
-            int j = 0;
+            //Needed for looping through the four triangles
+            int currentTriangle = 0;
 
+            //Because of how it is saved in backend, singular textData is set as array
             JSONArray textData = portal["textData"].AsArray;
             JSONNode rotation;
 
+            //Only loops once on account of there being one piece of data
             foreach(JSONNode textDataSpecific in textData)
             {
+                //Rotation of text in portal, contains x, y and z data
                 rotation = textDataSpecific["rotation"];
-                currentHouse.portals[index].textData.rotation.x = rotation["x"].AsDouble;
-                currentHouse.portals[index].textData.rotation.y = rotation["y"].AsDouble;
-                currentHouse.portals[index].textData.rotation.z = rotation["z"].AsDouble;
+                currentHouse.portals[currentPortal].textData.rotation.x = rotation["x"].AsDouble;
+                currentHouse.portals[currentPortal].textData.rotation.y = rotation["y"].AsDouble;
+                currentHouse.portals[currentPortal].textData.rotation.z = rotation["z"].AsDouble;
 
-                currentHouse.portals[index].textData.value = textDataSpecific["value"];
-                currentHouse.portals[index].textData.position = textDataSpecific["position"];
+                currentHouse.portals[currentPortal].textData.value = textDataSpecific["value"];
+                currentHouse.portals[currentPortal].textData.position = textDataSpecific["position"];
             }
 
+            //Four triangles are set to this JSONArray
             JSONArray triangleCollection = portal["triangles"].AsArray;
 
             
 
             foreach (JSONNode triangle in triangleCollection)
             {
-                currentHouse.portals[index].triangles[j].vertexA = triangle["vertexA"];
-                currentHouse.portals[index].triangles[j].vertexB = triangle["vertexB"];
-                currentHouse.portals[index].triangles[j].vertexC = triangle["vertexC"];
-                currentHouse.portals[index].triangles[j].color = triangle["color"];
+                //Each triangle has three vertexes and a color, though the color is the same for all triangles
+                currentHouse.portals[currentPortal].triangles[currentTriangle].vertexA = triangle["vertexA"];
+                currentHouse.portals[currentPortal].triangles[currentTriangle].vertexB = triangle["vertexB"];
+                currentHouse.portals[currentPortal].triangles[currentTriangle].vertexC = triangle["vertexC"];
+                currentHouse.portals[currentPortal].triangles[currentTriangle].color = triangle["color"];
 
-                j++;
+                currentTriangle++;
             }
 
-            currentHouse.portals[index].destination = portal["destination"];
-            currentHouse.portals[index].location = portal["location"];
+            //Destination here is what is set as the text for the portal, the location is the room it will be in when the 'Explore' section begins
+            currentHouse.portals[currentPortal].destination = portal["destination"];
+            currentHouse.portals[currentPortal].location = portal["location"];
 
-            index++;
+            currentPortal++;
         }
     }
 }

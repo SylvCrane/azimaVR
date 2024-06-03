@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+//Used to switch from upperCase to lowerCase and vice versa in a keyboard
 public class UpperCaseSwitch : MonoBehaviour
 {
     public Button upperCase;
@@ -34,6 +35,11 @@ public class UpperCaseSwitch : MonoBehaviour
     public TextMeshProUGUI x;
     public TextMeshProUGUI y;
     public TextMeshProUGUI z;
+
+    /*
+     * Used to switch the case of the physical buttons in the scene. If capital is true in the keyboard, switchDown() is called.
+     * if it is false, switchUp is called. In both cases, the bool of the capital is set to its opposite value.
+     */
 
     public void switchCase()
     {
@@ -97,10 +103,12 @@ public class UpperCaseSwitch : MonoBehaviour
             switchUp(y);
             switchUp(z);
             gameObject.GetComponent<KeyboardFunctionality>().capital = true;
-            upperCase.image.color = new Color(238, 255, 255);
+            upperCase.image.color = new Color(238, 0, 0);
         }
         
     }
+
+    //Switches character from lowerCase to upperCase.
     void switchUp(TextMeshProUGUI letter)
     {
         string letterPrior = letter.text;
@@ -108,6 +116,7 @@ public class UpperCaseSwitch : MonoBehaviour
         letter.text = letterAfter;
     }
 
+    //Switches character from upperCase to lowerCase.
     void switchDown(TextMeshProUGUI letter)
     {
         string letterPrior = letter.text;

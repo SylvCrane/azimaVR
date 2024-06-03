@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+//Sets the infoPlane text based on the data in houseData
 public class DetailsPanelAssignment : MonoBehaviour
 {
-    public TextMeshProUGUI bedrooms;
-    public TextMeshProUGUI bathrooms;
-    public TextMeshProUGUI sqFootage;
-    public TextMeshProUGUI livingAreas;
-    public TextMeshProUGUI price;
-    public TextMeshProUGUI address;
-    public TextMeshProUGUI dateAvailable;
-    public GameObject backyardYes;
-    public GameObject backyardNo;
-    public GameObject laundryYes;
-    public GameObject laundryNo;
-    
+    public TextMeshProUGUI bedrooms; //The text object for the # of bedrooms
+    public TextMeshProUGUI bathrooms; //The text object for the # of bathrooms
+    public TextMeshProUGUI sqFootage; //The text object for the square footage
+    public TextMeshProUGUI livingAreas; //The text object for the # of living areas
+    public TextMeshProUGUI price; //The text object for the price
+    public TextMeshProUGUI address; //The text object for the address
+    public TextMeshProUGUI dateAvailable; //The text object for the date
+    public GameObject backyardYes; //The Gameobject representing there being a backyard
+    public GameObject backyardNo; //The Gameobject representing there being no backyard
+    public GameObject laundryYes; //The Gameobject representing there being a laundry room
+    public GameObject laundryNo; //The Gameobject representing there being no laundry room
+
     // Start is called before the first frame update
     void Start()
     {
